@@ -1,37 +1,25 @@
-import { StatusBar } from 'expo-status-bar';
-import RegistrationScreen from './Screens/RegistrationScreen';
-import { StyleSheet, Platform, View, ImageBackground, TouchableWithoutFeedback, Keyboard  } from 'react-native';
-import LoginScreen from './Screens/LoginScreen';
+
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+
+
+import { useRoute } from './router';
+
+const AuthStack = createNativeStackNavigator();
+const MainTab = createBottomTabNavigator();
+console.log(MainTab)
+
 
 export default function App() {
+  const routing = useRoute(true)
+
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-    <View style={styles.container}>
+    <NavigationContainer> 
+      {routing}
+    </NavigationContainer>
       
-      <ImageBackground style={styles.image} source={require('./assets/Berg.png')}>
-          <RegistrationScreen />
-          {/* <LoginScreen /> */}
-      </ImageBackground>
-      
-      
-      <StatusBar style="auto" />
-    </View>
-    </TouchableWithoutFeedback>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    
-  },
-  image: {
-    flex: 1, 
-    resizeMode: 'cover', 
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  
-  
-});

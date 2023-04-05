@@ -1,4 +1,4 @@
-import { StyleSheet, View, Image, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Keyboard, Dimensions, Button } from "react-native"
+import { StyleSheet, StatusBar, View, Image, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Keyboard, Dimensions, Button, Platform, ImageBackground, TouchableWithoutFeedback } from "react-native"
 import { useEffect, useState } from "react"
 
 
@@ -10,12 +10,12 @@ import AppLoading from 'expo-app-loading';
 
 const loadFonts = async () => {
     await Font.loadAsync({
-        'RobotoRegular': require('../assets/fonts/Roboto-Regular.ttf'),
-        'RobotoMedium': require('../assets/fonts/Roboto-Medium.ttf'),
+        'RobotoRegular': require('../../assets/fonts/Roboto-Regular.ttf'),
+        'RobotoMedium': require('../../assets/fonts/Roboto-Medium.ttf'),
     })
 }
 
-const RegistrationScreen = () => {
+const RegistrationScreen = ({navigation}) => {
     const [isKeyBoardActive, setIsBoardActive] = useState(false)
     const [isReady, setIsReady] = useState(false)
     
@@ -50,6 +50,11 @@ const RegistrationScreen = () => {
         setName('')
         setEmail('')
         setPassword('')
+
+        // if(name.length === 0 || email.length === 0 || password.length === 0){
+        //     return
+        // }
+        navigation.navigate('Home')
     }
     
     if (!isReady) {
@@ -58,7 +63,10 @@ const RegistrationScreen = () => {
       
     return (
         <>
-        
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    <View style={styles.cont}>
+      
+      <ImageBackground style={styles.image} source={require('../../assets/Berg.png')}>
         <View style={{...styles.container}}>
             <View style={styles.avatar}>
                 {/* fotos */}
@@ -89,22 +97,39 @@ const RegistrationScreen = () => {
                      <Text style={{fontSize: 16, lineHeight: 19, color: '#1B4371', textDecorationLine: 'underline'}}>Показати</Text>
                      </View>
                  </View>  
-                <TouchableOpacity  activeOpacity={0.8} style={styles.btn} > 
+                <TouchableOpacity  activeOpacity={0.8} style={styles.btn} onPress={KeyboardHide}> 
                      <Text style={styles.btnText}>Зареєструватися</Text> 
                  </TouchableOpacity>
                 
-            <TouchableOpacity activeOpacity={0.8} style={styles.loginBtn} onPress={KeyboardHide}> 
-                     <Text style={styles.login}>У вас вже є aкаунт? Увійти</Text> 
+            <TouchableOpacity activeOpacity={0.8} style={styles.loginBtn} onPress={() => navigation.navigate('Login')}> 
+                     <Text style={styles.login} >У вас вже є aкаунт? Увійти</Text>
             </TouchableOpacity>
             </View>
             </KeyboardAvoidingView>
         </View>
+        </ImageBackground>
+      
+      
+      <StatusBar style="auto" />
+    </View>
+    </TouchableWithoutFeedback>
         </>
     )
 }
 
 
 const styles = StyleSheet.create({
+    cont: {
+        flex: 1,
+        backgroundColor: '#fff',
+        
+      },
+      image: {
+        flex: 1, 
+        resizeMode: 'cover', 
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+      },
 container: {
     backgroundColor: '#FFFFFF', 
     borderTopLeftRadius: 25, 
@@ -182,6 +207,7 @@ fontFamily: 'RobotoMedium',
 fontSize: 16,
 lineHeight: 19,
 color: '#1B4371',
+backgroundColor: '',
 }
 
 })
