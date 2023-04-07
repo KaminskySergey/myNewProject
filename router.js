@@ -10,7 +10,7 @@ import { Feather } from '@expo/vector-icons';
 
 import RegistrationScreen from './Screens/auth/RegistrationScreen';
 import LoginScreen from './Screens/auth/LoginScreen';
-import Home from './Screens/main/Home'
+
 
 import PostsScreen from './Screens/main/PostsScreen.jsx';
 import CreatePostsScreen from './Screens/main/CreatePostsScreen';
@@ -26,11 +26,10 @@ export const useRoute = (isAuth) => {
   
       <AuthStack.Screen options={{headerShown: false}} name='Login' component={LoginScreen} />
       <AuthStack.Screen options={{headerShown: false}} name="Register" component={RegistrationScreen} />
-      <AuthStack.Screen options={{headerShown: false}} name='Home' component={Home}/>
     
     </AuthStack.Navigator>
     }
-      return   <MainTab.Navigator screenOptions={{headerTitleAlign: 'center'}} tabBarOptions={{activeTintColor: 'black', activeBackgroundColor: '#FF6C00', showLabel: false, tabStyle: {width: 70, heigth: 40, borderRadius: 20 }}}>
+      return   <MainTab.Navigator screenOptions={{headerTitleAlign: 'center'}}  tabBarOptions={{activeTintColor: 'black', activeBackgroundColor: '#FF6C00', showLabel: false, tabStyle: {width: 70, heigth: 40, borderRadius: 20 }}}>
       <MainTab.Screen options={{
         tabBarIcon: ({focused, size, color}) => (<Ionicons name="md-grid-outline" size={24} color="black" />),
         headerRight: () => (<MaterialIcons  style={{paddingRight: 10, alignItems: 'center'}} name="logout" size={24} color="#BDBDBD"  />)

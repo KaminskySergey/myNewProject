@@ -54,7 +54,7 @@ const RegistrationScreen = ({navigation}) => {
         // if(name.length === 0 || email.length === 0 || password.length === 0){
         //     return
         // }
-        navigation.navigate('Home')
+        
     }
     
     if (!isReady) {

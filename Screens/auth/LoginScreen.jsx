@@ -47,7 +47,7 @@ const LoginScreen = ({navigation}) => {
         // if(email.length === 0 || password.length === 0){
         //     return
         // }
-        navigation.navigate('Home')
+        
     }
     if (!isReady) {
         return <AppLoading startAsync={loadFonts} onFinish={() => setIsReady(true)} onError={() => console.warn}/>;
@@ -68,7 +68,7 @@ const LoginScreen = ({navigation}) => {
 
         <View style={{...styles.form, marginBottom: isKeyBoardActive ? 32 : 100, width: dimensions}}>
             <View> 
-                <TextInput style={styles.input}  value={email} placeholder="Електронна пошта"  onFocus={() => setIsBoardActive(true)} onChangeText={handleEmail}> 
+                <TextInput style={styles.input}  value={email} placeholder="Електронна пошта" onFocus={() => setIsBoardActive(true)} onChangeText={handleEmail}> 
                         
                     </TextInput> 
                 </View> 
