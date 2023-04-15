@@ -1,24 +1,26 @@
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+import { Provider } from 'react-redux'
+
+// import { useRoute } from './router';
+import { store } from './Screens/redux/store';
 
 
 
-import { useRoute } from './router';
-
-const AuthStack = createNativeStackNavigator();
-const MainTab = createBottomTabNavigator();
-console.log(MainTab)
-
+// import {auth} from './firebase/config'
+// import { useState } from 'react';
+import Main from './coponents/Main';
 
 export default function App() {
-  const routing = useRoute(true)
+  // const [isAuth, setIsAuth] = useState(null)
+  // const routing = useRoute(isAuth)
+  
+  
 
   return (
-    <NavigationContainer> 
-      {routing}
-    </NavigationContainer>
+    <Provider store={store}>
+      <Main />
+    </Provider>
       
   );
 }

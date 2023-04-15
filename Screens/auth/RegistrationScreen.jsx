@@ -5,6 +5,8 @@ import { useEffect, useState } from "react"
 import * as Font from "expo-font";
 import AppLoading from 'expo-app-loading';
 
+import {authSignInUser, authSignUpUser, authSignOutUser} from '../redux/auth/authOperations'
+import { useDispatch } from "react-redux";
 
 
 
@@ -19,6 +21,8 @@ const RegistrationScreen = ({navigation}) => {
     const [isKeyBoardActive, setIsBoardActive] = useState(false)
     const [isReady, setIsReady] = useState(false)
     
+    const dispatch = useDispatch()
+
     const [dimensions, setdimensions] = useState(
         Dimensions.get("window").width - 20 * 2
       );
@@ -43,14 +47,14 @@ const RegistrationScreen = ({navigation}) => {
         };
       }, []);
 
-    const KeyboardHide = () => {
+    const handleSubmit = () => {
         setIsBoardActive(false)
         Keyboard.dismiss()
-        console.log(`${name}, ${email}, ${password}`)
+        console.log({name, email, password})
+        dispatch(authSignUpUser({name, email, password}))
         setName('')
         setEmail('')
         setPassword('')
-
         // if(name.length === 0 || email.length === 0 || password.length === 0){
         //     return
         // }
@@ -97,7 +101,7 @@ const RegistrationScreen = ({navigation}) => {
                      <Text style={{fontSize: 16, lineHeight: 19, color: '#1B4371', textDecorationLine: 'underline'}}>Показати</Text>
                      </View>
                  </View>  
-                <TouchableOpacity  activeOpacity={0.8} style={styles.btn} onPress={KeyboardHide}> 
+                <TouchableOpacity  activeOpacity={0.8} style={styles.btn} onPress={handleSubmit}> 
                      <Text style={styles.btnText}>Зареєструватися</Text> 
                  </TouchableOpacity>
                 

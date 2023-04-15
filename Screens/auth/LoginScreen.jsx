@@ -4,6 +4,9 @@ import { StyleSheet, StatusBar, View, Image, Text, TextInput, TouchableOpacity, 
 import * as Font from "expo-font";
 import AppLoading from 'expo-app-loading';
 
+import {authSignInUser, authSignUpUser, authSignOutUser} from '../redux/auth/authOperations'
+import { useDispatch } from "react-redux";
+
 const loadFonts = async () => {
     await Font.loadAsync({
         'RobotoRegular': require('../../assets/fonts/Roboto-Regular.ttf'),
@@ -15,6 +18,8 @@ const LoginScreen = ({navigation}) => {
     const [isKeyBoardActive, setIsBoardActive] = useState(false)
     const [isReady, setIsReady] = useState(false)
     
+    const dispatch = useDispatch()
+
     const [dimensions, setdimensions] = useState(
         Dimensions.get("window").width - 20 * 2
       );
@@ -37,11 +42,9 @@ const LoginScreen = ({navigation}) => {
         };
       }, []);
 
-    const KeyboardHide = () => {
-        setIsBoardActive(false)
-        Keyboard.dismiss()
-        console.log(`${email}, ${password}`)
-        
+    const handleSubmit = () => {
+        console.log({email, password})
+        dispatch(authSignInUser({email, password}))
         setEmail('')
         setPassword('')
         // if(email.length === 0 || password.length === 0){
@@ -49,13 +52,19 @@ const LoginScreen = ({navigation}) => {
         // }
         
     }
+
+    const keyboard = () => {
+        setIsBoardActive(false)
+        Keyboard.dismiss()
+    }
+    
     if (!isReady) {
         return <AppLoading startAsync={loadFonts} onFinish={() => setIsReady(true)} onError={() => console.warn}/>;
       }
 
     return (
         <>
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <TouchableWithoutFeedback onPress={keyboard}>
     <View style={styles.cont}>
       
       <ImageBackground style={styles.image} source={require('../../assets/Berg.png')}>
@@ -79,7 +88,7 @@ const LoginScreen = ({navigation}) => {
                      <Text style={{fontSize: 16, lineHeight: 19, color: '#1B4371', textDecorationLine: 'underline'}}>Показати</Text>
                      </View>
                  </View>  
-                 <TouchableOpacity activeOpacity={0.8} style={styles.btn} onPress={KeyboardHide}> 
+                 <TouchableOpacity activeOpacity={0.8} style={styles.btn} onPress={handleSubmit}> 
                      <Text style={styles.btnText}>Увійти</Text> 
                  </TouchableOpacity>
 

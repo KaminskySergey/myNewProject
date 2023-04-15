@@ -1,12 +1,19 @@
 import { Camera } from "expo-camera";
 import { StyleSheet, View, Text, TouchableOpacity, Image, KeyboardAvoidingView, TextInput, Dimensions, Keyboard } from "react-native";
 
+
+
+import { ref, getDownloadURL, uploadBytes  } from "firebase/storage";
+
+import {storage, firestore} from '../../firebase/config'
+import { collection, addDoc } from "firebase/firestore"; 
 import * as Location from 'expo-location';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+
 
 const CreatePostsScreen = ({navigation}) => {
     const [isKeyBoardActive, setIsBoardActive] = useState(false)
@@ -15,36 +22,104 @@ const CreatePostsScreen = ({navigation}) => {
     const [name, setName] = useState('')
     const [nameLocation, setNameLocation] = useState('')
     const [location, setLocation] = useState(null);
+    const [currentUrl, setCurrentUrl] = useState('')
     const [dimensions, setdimensions] = useState(
         Dimensions.get("window").width - 20 * 2
       );
+    
+      const { userId, nickname } = useSelector((state) => state.auth)
+
+useEffect(() => {
+    (async () => {
+      
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('Permission to access location was denied');
+        return;
+      }
+
+      let locationRef = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest, maximumAge: 10000});
+      setLocation(locationRef);
+    })();
+  }, []);
+
 
     const takeFoto = async () => {
         try {
             const foto = await camera.takePictureAsync()
-            const location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest, maximumAge: 10000});
             
-            const coords = {
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
-              };
-              setLocation(coords);
+            console.log(foto.uri, ']]]]]]]]]]]]]]]]]')
             setPhoto(foto.uri)
+            console.log(photo, 'в функции photo')
+            console.log(name, 'в функции name')
+            console.log(nameLocation, 'в функции nameLocation')
+            
         } catch (error) {
             console.log('не працює на телефоні')
         }
         
     }
-  console.log(location, 'ewewewewewew')
     const submmitFoto = () => {
+        // uploadPhotoToServer()
+        uploadPostToServer()
         console.log(navigation, 'navigation')
         navigation.navigate('HomeDefault', {photo})
         setIsBoardActive(false)
         Keyboard.dismiss()
         setName('')
         setNameLocation('')
+        setPhoto('')
+        console.log('photo', photo)
+        console.log('current', currentUrl)
+    }
+    
+    
+    const uploadPostToServer = async () => {
+        try {
+            const photo = await uploadPhotoToServer()
+            console.log(photo, 'bb')
+            
+            const docRef = await addDoc(collection(firestore, "posts"), {
+              name,
+              location,
+              nameLocation,
+              photo,
+              user: {
+                userId,
+                nickname,
+              }
+
+              
+            });
+            console.log("Document written with ID: ", docRef.id);
+          } catch (err) {
+            console.error("Error adding document: ", err);
+          }
     }
 
+    const uploadPhotoToServer = async () => {
+        try {
+            const response = await fetch(photo)
+            
+            const file = await response.blob()
+            console.log(file, 'file')
+            const id = Date.now().toString()
+            
+            const mountainsRef = await ref(storage, `postsImage/${id}`);
+            const uploadTask = await uploadBytes(mountainsRef, file);
+
+            const currentURL = await getDownloadURL(uploadTask.ref).then((url) => {
+                return url
+            })
+            console.log(currentURL, 'current')
+            return currentURL
+            
+            } catch (error) {
+            
+        }
+    }
+    
+    
     useEffect(() => {
         const onChange = () => {
           const width = Dimensions.get("window").width - 20 * 2;
@@ -93,7 +168,16 @@ const CreatePostsScreen = ({navigation}) => {
                 
                 </TextInput> 
             </View> 
-            <TouchableOpacity onPress={submmitFoto} style={styles.buttonPost}>
+            <TouchableOpacity disabled={photo.length === 0 && true} onPress={submmitFoto} style={{
+                width: '100%',
+                height: 51,
+                borderRadius: 100,
+                backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                alignItems: 'center',
+                justifyContent: 'center',
+                // backgroundColor: '#FF6C00',
+                backgroundColor: `${photo.length === 0 ? '#E8E8E8' : '#FF6C00'}`,
+            }}>
                     <Text style={{color: '#000'}}>
                     Опублікувати
                     </Text>
@@ -121,7 +205,7 @@ camera: {
     justifyContent: 'center',
     marginBottom: 8,
     borderRadius: 8,
-    
+    backgroundColor: '#000'
 },
 button: {
     width: 60,
@@ -142,14 +226,15 @@ photoContainer: {
     borderColor: '#fff',
 },
 buttonPost: {
-    width: '100%',
-    height: 51,
-    borderRadius: 100,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FF6C00',
+    // width: '100%',
+    // height: 51,
+    // borderRadius: 100,
+    // backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // backgroundColor: '#FF6C00',
 },
+
 name: {
     fontFamily: 'RobotoMedium',
     fontSize: 16,
